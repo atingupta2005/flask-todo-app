@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, url_for, render_template, flash
 from models import db, TodoItem
 import config
+import argparse
 
 app = Flask(__name__)
 app.config.from_object(config.Config)
@@ -37,7 +38,20 @@ def delete(id):
     flash('Task deleted!')
     return redirect(url_for('index'))
 
-if __name__ == '__main__':
+def main():
+    # Set up argument parsing
+    parser = argparse.ArgumentParser(description='Run the Flask application.')
+    parser.add_argument('--port', type=int, default=5000, help='Port number to run the Flask application on.')
+    
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Create all database tables (if applicable)
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+
+    # Run the Flask application
+    app.run(debug=True, host='0.0.0.0', port=args.port)
+
+if __name__ == '__main__':
+    main()
